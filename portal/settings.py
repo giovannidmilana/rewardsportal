@@ -80,17 +80,35 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'rewardssystemdb',
+        'ENGINE': 'sql_server.pyodbc',
+        'NAME': 'rewardssystemdb.mysql.database.azure.com',
         'USER': 'Giovanni@rewardssystemdb',
         'PASSWORD': 'RewardsBoi@1',
         'PORT': '3306',
         'HOST': 'rewardssystemdb.mysql.database.azure.com',
         'OPTIONS': {
-            'read_default_file': '/etc/mysql/my.cnf',
-        },
+             'driver': 'ODBC Driver 13 for SQL Server',
+             'MARS_Connection': 'True',
+         }
     }
 }
+
+
+
+
+'''
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'portal_data',
+        'USER': 'root',
+        'PASSWORD': 'newpassword',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
+    }
+}
+'''
+
 
 
 
