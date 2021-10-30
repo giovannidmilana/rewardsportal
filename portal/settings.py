@@ -81,11 +81,11 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'portal_data',
-        'USER': 'root',
-        'PASSWORD': 'newpassword',
+        'NAME': 'rewardssystemdb',
+        'USER': 'Giovanni@rewardssystemdb',
+        'PASSWORD': 'RewardsBoi@1',
         'PORT': '3306',
-        'HOST': 'localhost',
+        'HOST': 'rewardssystemdb.mysql.database.azure.com',
         'OPTIONS': {
             'read_default_file': '/etc/mysql/my.cnf',
         },
