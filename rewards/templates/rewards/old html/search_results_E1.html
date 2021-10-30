@@ -1,0 +1,29 @@
+<html>
+<title>Social File</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins">
+<body>
+{% block content %}
+  <h1>Search Results</h1>
+
+  <ul>
+    {% for user_ in object_list %}
+      <li>
+       <a href="{% url 'rewards:create_transaction' user_.id %}">
+        <p>{{ user_.first_name }}, {{ user_.last_name }}</p>
+        <p>{{user_.email}}, {{user_.username}}</p>
+        </a>
+        <a href="{% url 'rewards:employee_edit2' user_.id %}">
+        <p> edit Employee</p>
+        </a>
+        </a>
+        <a href="{% url 'rewards:employee_delete' user_.id %}">
+        <p> delete Employee</p>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock content %}

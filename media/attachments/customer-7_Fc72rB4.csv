@@ -1,0 +1,4 @@
+First,Last,Address,Email,Phone,Created,Balance,Last Visit,messages_period,total_balance,last_marketed,opted,id
+test,tester,hhhhhhhhhhhhhhhh,gtechmedia840@gmail.com,4703570000,2021-10-19,0,2021-10-21 23:33:13.917894+00:00,2,3,2021-10-29 03:59:47.898467+00:00,False,147
+test,tester,hhhhhhhhhhhhhhhh,gtechmedia840@gmail.com,4703570000,2021-10-19,0,2021-10-19 18:24:52.050767+00:00,1,0,2021-10-29 03:59:48.012285+00:00,False,148
+test,tester,hhhhhhhhhhhhhhhh,gtechmedia840@gmail.com,4703570000,2021-10-19,0,2021-10-19 18:24:52.063256+00:00,2,0,2021-10-29 03:59:48.117382+00:00,False,149

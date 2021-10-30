@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<title>W3.CSS Template</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+.myDiv1 {
+  margin: auto;
+  width: 100%;
+  background-color: black;    
+  text-align: center;
+  
+}
+.myDiv2 {
+  margin: auto;
+  width: 100%;
+  background-color: black;    
+  text-align: center;
+}
+
+body,h1 {font-family: "Raleway", Arial, sans-serif}
+h1 {letter-spacing: 6px}
+.w3-row-padding img {margin-bottom: 12px}
+</style>
+<body class="w3-black">
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-content" style="max-width:1500px">
+
+<!-- Header -->
+<header class="w3-panel w3-center w3-opacity" style="padding:96px 16px">
+  <h1 class="w3-xlarge">Marketing Portal</h1>
+  <h1>logged in as {{ user.first_name }} {{ user.last_name }}</h1>
+  
+  <div class="w3-padding-16">
+    <div class="w3-bar w3-border">
+      <a href="{% url 'messaging:index2' %}" class="w3-bar-item w3-button">Marketing Home</a>
+      <a href="{% url 'messaging:behavior_creation' %}" class="w3-bar-item w3-button">New behavior</a>
+      <a href="{% url 'rewards:index' %}" class="w3-bar-item w3-button">Rewards Home</a>
+    </div>
+  </div>
+</header>
+
+<!-- Photo Grid -->
+  
+   <div class="myDiv1" id="contact">  
+    <h1> Edit Message</h1>
+    <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ message_form.as_p }}
+    <button type="submit">Create</button>
+  </form>
+  </div>
+  
+  <div class="myDiv2">
+  <p></p>
+  <a href="{% url 'messaging:message_delete' message.id %}"> <button> Delete</button></a>
+  </div> 
+  
+<!-- End Page Content -->
+</div>
+
+
+
+</body>
+</html>
+
+

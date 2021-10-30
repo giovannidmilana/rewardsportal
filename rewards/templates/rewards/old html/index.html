@@ -1,0 +1,28 @@
+
+{% block content %}
+<p> customer </p>
+<form style="text-align:center;" action="{% url 'rewards:search_results' %}" method="get">
+ <input name="q" type="text" placeholder="Search Users">
+ <button type="submit">Search</button>
+</form>
+
+<p> employee </p>
+<form style="text-align:center;" action="{% url 'rewards:search_resultse' %}" method="get">
+ <input name="q" type="text" placeholder="Search Users">
+ <button type="submit">Search</button>
+</form>
+
+<p> card </p>
+<form style="text-align:center;" action="{% url 'rewards:search_resultsc' %}" method="get">
+ <input name="q" type="text" placeholder="Search Users">
+ <button type="submit">Search</button>
+</form>
+
+<li>{{ user }}</li>
+
+<li><a href="{% url 'rewards:register' %}">register</a></li>
+<li><a href="{% url 'rewards:login' %}">Log in</a></li>
+<li><a href="{% url 'rewards:logout' %}">log out</a></li>
+<li><a href="{% url 'rewards:customer_creation' %}">customer create</a></li>
+<li><a href="{% url 'rewards:employee_edit' %}">employee edit</a></li>
+{% endblock content %}
