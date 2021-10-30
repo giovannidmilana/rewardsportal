@@ -77,22 +77,19 @@ WSGI_APPLICATION = 'portal.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
-        'ENGINE': 'sql_server.pyodbc',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'rewardssystemdb.mysql.database.azure.com',
         'USER': 'Giovanni@rewardssystemdb',
         'PASSWORD': 'RewardsBoi@1',
         'PORT': '3306',
         'HOST': 'rewardssystemdb.mysql.database.azure.com',
-        'OPTIONS': {
-             'driver': 'ODBC Driver 13 for SQL Server',
-             'MARS_Connection': 'True',
-         }
+        
     }
 }
-
+'''
 
 
 
@@ -109,6 +106,16 @@ DATABASES = {
 }
 '''
 
+
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
 
 
 
