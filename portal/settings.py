@@ -107,6 +107,23 @@ DATABASES = {
 '''
 
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'portal_data',
+        'USER': 'Giovanni@rewards-server',
+        'PASSWORD': 'RewardsBoi@1',
+        'HOST': 'rewards-server.postgres.database.azure.com',
+        'PORT': '5432'
+        
+    }
+}
+
+
+
+
+
+
 
 
 '''
