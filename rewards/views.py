@@ -48,12 +48,12 @@ def logout_view(request):
         
 def register(request):
     """register new user"""
-    
+    '''
     if admin_check(request) == True:
         pass
     else:
         return HttpResponseRedirect(reverse('rewards:index'))
-    
+    '''
     if request.method != 'POST':
         user_form = UserForm()
         employee_form = EmployeeForm()
