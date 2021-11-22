@@ -37,5 +37,6 @@ soupsieve==2.2.1
 sqlparse==0.4.1
 starkbank-ecdsa==1.1.1
 tomli==1.2.2
+twilio==6.63.2
 uamqp==1.4.2
 urllib3==1.26.6
