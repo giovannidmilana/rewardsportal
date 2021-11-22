@@ -53,7 +53,7 @@ h1 {letter-spacing: 6px}
       <a href="{% url 'messaging:index2' %}" class="w3-bar-item w3-button">Marketing Home</a>
       <a href="{% url 'messaging:behavior_creation' %}" class="w3-bar-item w3-button">New behavior</a>
       <a href="{% url 'rewards:index' %}" class="w3-bar-item w3-button">Rewards Home</a>
-      
+      <a href="{% url 'messaging:analytics' %}" class="w3-bar-item w3-button">Analytics</a>
       
       <div class="w3-dropdown-hover w3-hide-small">
       <button class="w3-padding-large w3-button" title="More">Data Export <i class="fa fa-caret-down"></i></button>     
@@ -63,6 +63,7 @@ h1 {letter-spacing: 6px}
         <a href="{% url 'messaging:promo_csv' %}" class="w3-bar-item w3-button">Active Promotions CSV</a>
         <a href="{% url 'messaging:opt_record_csv' %}" class="w3-bar-item w3-button">Opt in Record CSV</a>
         <a href="{% url 'messaging:behavior_csv' %}" class="w3-bar-item w3-button">Behavior CSV</a>
+        <a href="{% url 'messaging:message_csv' %}" class="w3-bar-item w3-button">Message CSV</a>
       </div>
     </div>
       
@@ -154,6 +155,9 @@ h1 {letter-spacing: 6px}
             <p>Title: {{ i.title }}</p>
             <p>Attached to {{ i.count }} message</p>
             <a href="{% url 'messaging:attachment_delete' i.id %}"><button class="w3-button w3-black w3-margin-bottom"">Delete</button></a>
+            
+            <a href="{% url 'messaging:pdf_view' i.id %}"><button class="w3-button w3-black w3-margin-bottom"">View</button></a>
+          
           </div>
         </div>
        
@@ -177,6 +181,7 @@ h1 {letter-spacing: 6px}
             <p style="color:Black">Body of Message: {{ user_.body }}</p>
             <p style="color:Black">Message used {{ user_.count }} times</p>
             <a href="{% url 'messaging:message_edit' user_.id %}"><button class="w3-button w3-black w3-margin-bottom"">Details</button></a>
+          
           </div>
         </div>
         

@@ -1,6 +1,6 @@
 from schedule import Scheduler
 import threading
-from rewards.views import *
+from messaging.sub_logic import *
 import time
 
 def sched_test():
@@ -38,7 +38,7 @@ Scheduler.run_continuously = run_continuously
 
 def start_scheduler():
     scheduler = Scheduler()
-    scheduler.every().second.do(message_s1)
+    scheduler.every().second.do(main)
     scheduler.run_continuously()
 
 

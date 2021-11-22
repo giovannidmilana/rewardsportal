@@ -45,6 +45,19 @@ class Behavior(models.Model):
     expiration = models.DateTimeField(null=True, blank=True)
     #add group field (FK)
     
+    def plot_path(self):
+        return "/media/plots/" + str(self.title).replace(" ", "") + ".png"
+        
+    def getMvalue(self):
+        return len(ShortMessage.objects.filter(behavior_id = self.id))
+        
+    def getTvalue(self):
+        l = []
+        for i in ShortMessage.objects.filter(behavior_id = self.id):
+            l.append(Transaction.objects.filter(customer_id = i.customer.id))
+        return len(l)
+        
+    
 
     
 class Message(models.Model):
@@ -75,6 +88,14 @@ class Promo(models.Model):
     
 class Document(models.Model):
     upload = models.FileField(upload_to='attachments/')
+    
+class ShortMessage(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    behavior = models.ForeignKey(Behavior, on_delete=models.CASCADE)
+    attachment = models.ForeignKey(Attachment, on_delete=models.CASCADE, null=True)
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    created = models.DateTimeField(auto_now_add=True)
+    
     
     
     

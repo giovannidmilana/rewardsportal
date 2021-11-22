@@ -18,6 +18,8 @@ urlpatterns = [
     path('message_delete/<int:message_id>/', views.message_delete, name='message_delete'),
     path('attachment_delete/<int:attachment_id>/', views.attachment_delete, name='attachment_delete'),
     
+    path('analytics/', views.analytics, name='analytics'),
+    
     path('create_csv/', views.create_csv, name='create_csv'),
     
     path('transaction_csv/', views.transaction_csv, name='transaction_csv'),
@@ -28,8 +30,14 @@ urlpatterns = [
     
     path('behavior_csv/', views.behavior_csv, name='behavior_csv'),
     
+    path('message_csv/', views.message_csv, name='message_csv'),
+    
     
     path('get_csv/<int:behavior_id>/', views.get_csv, name="get_csv"),
+    
+    path('pdf_view/<int:attachment_id>/', views.pdf_view, name="pdf_view"),
+    
+    
     
     #path('create_csv/', views.create_csv, name='create_csv')
 

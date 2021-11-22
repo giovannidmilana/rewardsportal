@@ -12,7 +12,7 @@ from .models import *
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime, timedelta
 from django.utils import timezone
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import HttpResponseRedirect, Http404, HttpResponse, FileResponse
 from django.urls import reverse
 
 import os
@@ -27,490 +27,17 @@ import base64
 
 import csv, io
 
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+#from pandas import DataFrame, Timestamp
+
+
 #update datetimefield with datetime.datetime.now()
 
 
 
-# Create your views here.
-
-
-
-def recieve_messaging():
-    CONNECTION_STR = "Endpoint=sb://rewardssb.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=fHMy3hEwmC+2qnfWXjmoWsFznmaUMWcVXLaEhHLXRXw="
-    QUEUE_NAME = "portalrm"
-
-    servicebus_client = ServiceBusClient.from_connection_string(conn_str=CONNECTION_STR, logging_enable=True)
-
-    with servicebus_client:
-        receiver = servicebus_client.get_queue_receiver(queue_name=QUEUE_NAME, max_wait_time=5)
-        with receiver:
-            for msg in receiver:
-                print("Received: " + str(msg))
-                #number
-                number = str(msg).split('+')[2].split('"')[0]
-                #message
-                message = str(msg).split('message')[2].split('"')[2].lower()
-                receiver.complete_message(msg)
-                if message == 'y' or message == 'yes':
-                    opt_log(number)
-                    opt_record_s2(str(msg), number)
-                    
-                    
-def opt_log(number):
-    print('get bitch')
-    obj = Customer.objects.filter(phone = number[1:])
-    mc = MCustomer.objects.filter(customer = obj[0].id)
-    mc[0].opted = True
-    mc[0].save()
-
-def send_sm(customer_id, message):
-    obj = get_object_or_404(Customer, id = customer_id)
-    print(obj.phone)
-    sms_client = SmsClient.from_connection_string('endpoint=https://portalcommunication.communication.azure.com/;accesskey=yEo6SpHo5gaGTpLbH3dqFyHPCVJf1Ot3I4kvNWom2wWXOU0wBWa3lmWzR68wiSFMvefXzZFafecGKgZRn10HPg==')
-    sms_responses = sms_client.send(
-    from_="+18333491173",
-    to="+14703578182",
-    message=message.body + ' \t-' + message.subject,
-    enable_delivery_report=True, # optional property
-    tag="custom-tag") # optional property
-    print(sms_responses.message)
-    
-def send_e(customer_id, message, file_attachment=None):
-    print("ehehehehehheheh")
-    obj = get_object_or_404(Customer, id = customer_id)
-    message = Mail(
-        from_email='gtechmedia840@gmail.com',
-        to_emails=obj.email,
-        subject=message.subject,
-        #html_content='<strong>and easy to do anywhere, even with Python</strong>')
-        html_content=message.body)
-    if file_attachment != None:
-        
-        #file_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), file_attachment.upload.url)
-        file_path = file_attachment.upload.path
-        print(file_path)
-
-        with open(file_path, 'rb') as f:
-            data = f.read()
-
-        encoded = base64.b64encode(data).decode()
-
-        attachment = FAttachment()
-        attachment.file_content = FileContent(encoded)
-        attachment.file_type = FileType("application/pdf")
-        attachment.file_name = FileName("attachment.pdf")
-        attachment.disposition = Disposition("attachment")
-        attachment.content_id = ContentId("PDF Document file")
-        message.attachment = attachment
-        
-    try:
-        #sg = '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'
-        sg = SendGridAPIClient('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')
-        response = sg.send(message)
-
-    except Exception as e:
-        print(e)
-    
-
-
-
-
-def opt_in(customer_id, *args, **kwargs):
-    obj = get_object_or_404(Customer, id = customer_id)
-    print(obj.phone)
-    message = "send 'Y', 'y' or 'yes' to opt into messaging"
-    sms_client = SmsClient.from_connection_string('endpoint=https://portalcommunication.communication.azure.com/;accesskey=yEo6SpHo5gaGTpLbH3dqFyHPCVJf1Ot3I4kvNWom2wWXOU0wBWa3lmWzR68wiSFMvefXzZFafecGKgZRn10HPg==')
-    sms_responses = sms_client.send(
-    from_="+18333491173",
-    to='+1' + obj.phone,
-    message = message,
-    enable_delivery_report=True, # optional property
-    tag="custom-tag") # optional property
-    consent = "to " + sms_responses[0].to + "message id" + sms_responses[0].message_id
-    opt_record_s1(consent, obj)
-    
-    
-def opt_record_s1(consentm, customer):
-    print('s1')
-    print(consentm)
-    try:
-        r = OptRecord(consent=consentm, customer=customer)
-        r.save()
-        
-    except Exception as e:
-        r = OptRecord.objects.get(customer = customer.id)
-        r.consent = consentm
-        r.save()
-    #r = OptRecord(consent=consentm, customer=customer)
-    #r.save()
-    
-    
-def opt_record_s2(opt, number):
-    print('s1')
-    print(len(opt))
-    customer = Customer.objects.filter(phone = number[1:])
-    mc = MCustomer.objects.get(customer = customer[0].id)
-    mc.opted = True
-    mc.save()
-    r = OptRecord.objects.get(customer = customer[0])
-    r.opt=opt
-    r.save()
-
-    
-    
-         
-def message_s1():
-     recieve_messaging()
-     b1 = Behavior.objects.filter(demo = '1')
-     b1 = list(b1)
-     if len(b1) > 0:
-         message_s2(b1, '1')
-     
-     b2 = Behavior.objects.filter(demo = '2')
-     b2 = list(b2)
-     if len(b2) > 0:
-         message_s2(b2, '2')
-     
-     b3 = Behavior.objects.filter(demo = '3')
-     b3 = list(b3)
-     if len(b3) > 0:
-         message_s2(b3, '3')
-     
-     b4 = Behavior.objects.filter(demo = '4')
-     b4 = list(b4)
-     if len(b4) > 0:
-         message_s3(b4)
-     
-     b5 = Behavior.objects.filter(demo = '5')
-     b5 = list(b5)
-     if len(b5) > 0:
-         message_s4(b5)
-     b6 = Behavior.objects.filter(demo = '6')
-     b6 = list(b6)
-     if len(b6) > 0:
-         message_s5(b6)
-         
-     if datetime.now().day == 1:
-         print("first")
-         new_period()
-     else:
-         print("not")
-     
-
-
-
-#sorts customer list by balance and isolates upper lower, middle and percentile 
-def message_s2(mylist, d):
-    #c = MCustomer.objects.filter(opted = True)
-    c = MCustomer.objects.all()
-    c.order_by('total_balance')
-    c = list(c)
-    print(len(mylist))
-    if len(mylist) != 0:
-        k = mylist[0]
-        
-        while k != None:
-            if behavior_check(k) == True:
-                #print("banacheck")
-                v = int(len(c) * k.reach_percent / 100)
-                if d == '1':
-                    print("lower")
-                    c = c[0:v]
-                    c = customer_check2(c)
-                    print(len(c))
-                    send_messages(c, k)
-                if d == '2':
-                    print("middle")
-                    mid = int(len(c) / 2) 
-                    m = int((v/2))
-                    c = c[mid - m : mid + m]
-                    c = customer_check2(c)
-                    print(len(c))
-                    send_messages(c, k)
-                if d == '3':
-                    print("Higher")
-                    c = c[len(c)-v: -1]
-                    c = customer_check2(c)           
-                    print(len(c))
-                    send_messages(c, k)
-            del mylist[0]
-            return message_s2(mylist, d)
-            
-
-
-'''
-#sorts customer list by balance and isolates upper lower, middle and percentile 
-def message_s2(behaviors, d):
-    #sorts customers by total_balance lower starting at index [0]
-    c = MCustomer.objects.order_by('total_balance')
-    c = list(c)
-    #v = int(len(c) * behavior.reach_percent / 100)
-    for behavior in behaviors:
-       if behavior_check(behavior) == True:
-           v = int(len(c) * behavior.reach_percent / 100)
-           if d == '1':
-               print(len(c[0:v]))
-               c = c[0:v]
-               print("c")
-               print(len(c))
-               c = customer_check2(c)
-               send_messages(c, behavior)
-           if d == '2':
-               mid = int(len(c) / 2) 
-               m = int((v/2))
-               print(len(c[mid - m : mid + m]))
-               c = c[mid - m : mid + m]
-               c = customer_check2(c)
-               send_messages(c, behavior)
-           if d == '3':
-               print(len(c[len(c)-v: -1]))
-               c = c[len(c)-v: -1]
-               c = customer_check2(c)           
-               send_messages(c, behavior)
-'''
-
-
-
-
-#isolates a random demo of customers
-def message_s3(mylist, customers=0, v=0):
-    '''
-    vc = []
-    customers = MCustomer.objects.order_by('total_balance')
-    customers = list(customers)
-    v = int(len(customers) * mylist[0].reach_percent / 100)
-    '''
-    print("Random")
-    if len(mylist) != 0:
-        if v== 0:
-            #print('test')
-            customers = MCustomer.objects.order_by('total_balance')
-            customers = list(customers)
-            v = int(len(customers) * mylist[0].reach_percent / 100)
-        k = mylist[0]
-        ri = random.randint(0,len(customers))-1
-        c = customers[ri]
-        del customers[ri]
-        #del mylist[0]
-    
-        if behavior_check(k) == True:
-            if customer_check(c) == True:
-                send_messages([c], k)
-        v = v - 1
-        if v == 0:
-            del mylist[0]
-        return message_s3(mylist, customers, v)
-
-
-
-
-
-'''
-
-#markets to randomly selected customers 
-def message_s3(behaviors):
-    vc = []
-    c = MCustomer.objects.order_by('total_balance')
-    c = list(c)
-    v = int(len(c) * behaviors[0].reach_percent / 100)
-    for behavior in behaviors:
-        if behavior_check(behavior) == True:
-            for i in range(0, v):
-                if customer_check(c[random.randint(0,len(c))-1]) == True:
-                    vc.append(c[random.randint(0,len(c))-1])
-                else:
-                    i = i-1
-            c = customer_check2(vc)
-            send_messages(c, behavior)
-    print(len(vc))
-'''
-
-
-#messages to customers who havnt been in in a while
-def message_s4(mylist):
-    c = Customer.objects.order_by('lastvisit')
-    c = list(c)
-    print("long time no see")
-    #print(len(mylist))
-    if len(mylist) != 0:
-        k = mylist[0]
-        del mylist[0]
-        while k != None:
-            #print('checkaroo boi 3')
-            if behavior_check(k) == True:
-                #c = Customer.objects.order_by('lastvisit')
-                v = int(len(c) * k.reach_percent / 100)
-                #print(len(c[0:v]))
-                c = customer_check2(c[0:v])
-                send_messages(c, k)
-            return message_s5(mylist)
-    else:
-        return
-
-
-
-
-
-
-
-'''
-#messages to customers who havnt been in in a while
-def message_s4(behaviors):
-    c = Customer.objects.order_by('lastvisit')
-    for behavior in behaviors:
-        if behavior_check(behavior) == True:
-            #c = Customer.objects.order_by('lastvisit')
-            v = int(len(c) * behavior.reach_percent / 100)
-            print(len(c[0:v]))
-            c = customer_check2(c[0:v])
-            send_messages(c, behavior)
-'''
-
-
-
-#messages to customers who have recently visited
-def message_s5(mylist):
-    c = Customer.objects.order_by('lastvisit')
-    c = list(c)
-    #print("length")
-    print("recently visited")
-    if len(mylist) != 0:
-        k = mylist[0]
-        del mylist[0]
-        while k != None:
-            #print('checkaroo boi')
-            if behavior_check(k) == True:
-                #c = Customer.objects.order_by('lastvisit')
-                v = int(len(c) * k.reach_percent / 100)
-                #print(len(c[len(c)-v: -1]))
-                c = customer_check2(c[len(c)-v: -1])
-                send_messages(c, k)
-            return message_s5(mylist)
-    else:
-        return
-    
-            
-
-
-
-
-
-'''
-#messages to customers who have recently visited
-def message_s5(behaviors):
-    c = Customer.objects.order_by('lastvisit')
-    c = list(c)
-    for behavior in behaviors:
-        if behavior_check(behavior) == True:
-            #c = Customer.objects.order_by('lastvisit')
-            v = int(len(c) * behavior.reach_percent / 100)
-            print(len(c[len(c)-v: -1]))
-            c = customer_check2(c[len(c)-v: -1])
-            send_messages(c, behavior)
-'''     
-
-
-
-
-
-
-#checks customers are valid to recieve mrketing
-def customer_check2(customers):
-    #obj = get_object_or_404(Customer, id = customer.customer_id)
-    c = []
-    print(len(customers))
-    for i in range(0, len(customers)-1):
-        if customer_check(customers[i]) != False:
-            c.append(customers[i])
-    return c
-
-
-
-#checks customers are valid to recieve mrketing
-def customer_check(customer):
-    # chech opted field in Mcustomer
-    tc = 0
-    mp = 8
-    try:
-        customer = get_object_or_404(MCustomer, customer_id = customer.id)
-        pass
-        
-    except Exception as e:
-        pass
-    #customer = get_object_or_404(MCustomer, customer_id = customer.id)
-    # and customer.opted == True
-    if (customer.last_marketed < (timezone.now() - timedelta(days=tc))) and (customer.messages_period < mp) and (customer.customer.lastvisit < (timezone.now() - timedelta(days=tc))):
-        #print(customer.messages_period)
-        return True
-    else:
-        return False
-
-
-
-def send_messages(customers, behavior):
-    messages = Message.objects.filter(behavior_id = behavior.id)
-    attachments = Attachment.objects.filter(behavior_id = behavior.id)
-    #print(len(messages))
-    for i in range(0, len(customers)):
-        update_cb(behavior, customers[i])
-        if behavior.platform == '1':
-            #print(len(Attachment.objects.filter(behavior_id = behavior.id)))
-            if len(Attachment.objects.filter(behavior_id = behavior.id)) > 0:
-                attachment = Attachment.objects.filter(behavior_id = behavior.id)[random.randint(0,len(Attachment.objects.filter(behavior_id = behavior.id))-1)]
-                update_a(attachment)
-            message = messages[random.randint(0,len(Message.objects.filter(behavior_id = behavior.id))-1)]
-            #send_e(customers[i].customer.id, message, attachment)
-            update_m(message)
-            create_promo(message, behavior, customers[i])
-        else:
-            #send_sm(customers[i].customer.id, messages[random.randint(0,len(messages)-1)])
-            pass
-
-def update_a(attachment):
-    print('update records')
-    attachment.count = attachment.count + 1
-    attachment.save()
-    
-    
-    
-def update_m(message):
-    print('update records')
-    message.count = message.count + 1
-    message.save()
-
-
-def update_cb(behavior, customer):
-    try:
-        customer = get_object_or_404(MCustomer, customer_id = customer.id)
-        print('switched')
-    except Exception as e:
-        print('e')
-    behavior.reached = behavior.reached + 1
-    behavior.save()
-    
-    customer.messages_period = customer.messages_period + 1
-    customer.save()
-    
-    customer.last_marketed = timezone.now()
-    customer.save()
-    #behavior.save()
-    #customer.save()
-
-
-def behavior_check(behavior):
-    t = behavior.reach_percent * len(MCustomer.objects.all()) / 100
-    if behavior.reached < t and behavior.reached < behavior.reach_total and behavior.active == True:
-        print("True")
-        return True
-    else: 
-        print("False")
-        return False 
-
-
-
-#message_s1()
-
-            
+# Create your views here.            
 def messaging_customer_creation(customer_id):
     obj = get_object_or_404(Customer, id = customer_id)
     message_customer = MCustomer.objects.create(customer = obj, total_balance = obj.balance, messages_period = 1, last_marketed = timezone.now())
@@ -580,6 +107,20 @@ def promo_csv(request):
     for i in range(0, len(promos)):
         writer.writerow(promos[i])  
     response['Content-Disposition'] = 'attachments; filename="promotions.csv" '
+    return response
+    
+    
+    
+def message_csv(request):
+    response = HttpResponse(content_type='text/csv')
+    
+    writer = csv.writer(response)
+    writer.writerow(['message', 'behavior', 'attachment', 'customer_id', 'created'])
+    messages = ShortMessage.objects.all().order_by('customer_id').values_list('message', 'behavior', 'attachment', 'customer_id', 'created')
+    #customers = Customer.objects.all().order_by('id').values_list('first', 'last', 'address', 'email', 'phone', 'created', 'balance', 'lastvisit')
+    for i in range(0, len(messages)):
+        writer.writerow(messages[i])  
+    response['Content-Disposition'] = 'attachments; filename="messages.csv" '
     return response
     
     
@@ -710,6 +251,19 @@ def message_delete(request, message_id):
 
 
 
+def analytics(request):
+    behaviors = Behavior.objects.all()
+    l = []
+    for i in behaviors:
+        l.append('/media/plots/' + str(i.title) + '.png')
+    
+    
+    context = {'l': l, 'behaviors' : behaviors}
+    return render(request, 'messaging/analytics1.php', context)
+    
+
+
+
 
 def attachment_delete(request, attachment_id):
     """register new user"""
@@ -738,20 +292,9 @@ def attach_file(request, behavior_id):
     context = {'attachment_form': attachment_form}
     return render(request, 'messaging/attachment_upload.html', context)
     
-def create_promo(message, behavior, customer):
     
-    try:
-        customer = get_object_or_404(MCustomer, customer_id = customer.id)
-        pass
-        
-    except Exception as e:
-        pass
     
-    if behavior.promotion == True:
-        print("created promotion")
-        promotion = Promo.objects.create(customer = customer.customer, message = message, behavior = behavior)
-    else:
-       return
+
 
 
 def get_csv(request, behavior_id):
@@ -778,6 +321,48 @@ def get_csv(request, behavior_id):
     
     
     
+def get_plot2():
+    for behavior in Behavior.objects.all():
+        get_plot(behavior.id)
+
+
+def get_plot(behavior_id):
+    behavior = get_object_or_404(Behavior, id = behavior_id)
+    
+    messages = pd.DataFrame(list(ShortMessage.objects.filter(behavior = behavior_id).values()))
+    rt = pd.DataFrame(list(Transaction.objects.all().values()))
+    print("K")
+    print(len(messages))
+    print(len(rt))
+    
+    rt = rt[rt['customer_id'].isin(messages['customer_id'].unique())]
+    
+    messages['V'] = np.arange(0, len(messages))
+    #messages['V'] = np.ones(len(messages))
+    #rt['V'] = np.arange(0,len(rt))
+
+    rt = rt.sort_values(by='time',  ascending=True)
+    messages = messages.sort_values(by='created', ascending=True)
+    '''
+    plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
+    plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
+    '''
+    #print(rt['total'].rolling(5).mean())
+    #print(messages['V'].rolling(5).mean())
+    
+    plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
+    plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
+    plt.legend(loc="upper left")
+    #plt.legend()
+    #plt.show()
+    plt.savefig('media/plots/' + str(behavior.title).replace(" ", "") + '.png')
+    plt.close()
+    
+    
+    
+
+    
+    
 def get_customers(ids, behavior):
     customers = []
     for i in ids:
@@ -786,9 +371,17 @@ def get_customers(ids, behavior):
 
 
 
+def pdf_view(request, attachment_id):
+    try:
+        obj = get_object_or_404(Attachment, id = attachment_id)
+        return FileResponse(open(obj.upload.path, 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        raise Http404()
 
 
-            
+#get_plot2()
+#get_plot(12)
+print("P")     
 
     
 

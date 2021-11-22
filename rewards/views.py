@@ -28,14 +28,14 @@ def index(request):
         context = {'user' : request.user, 'customer_form' : customer_form, 'employee' : employee}
         return render(request, 'rewards/index1.html', context)
     else:
-        '''
+        
         employee = get_object_or_404(Employee, user_id = request.user.id)
         customer_form = CustomerForm()
         context = {'user' : request.user, 'customer_form' : customer_form, 'employee' : employee}
         return render(request, 'rewards/index1.html', context)
-        '''
         
-        return HttpResponseRedirect(reverse('rewards:login'))
+        
+        #return HttpResponseRedirect(reverse('rewards:login'))
         
 class login_view(LoginView):
     template_name = 'rewards/login1.html'
@@ -281,12 +281,6 @@ def upc_create(request, customer_id):
     return render(request, 'rewards/card_creation.html', context)
     
 
-    
-    
-    
-    
-    
-    
 def customer_delete(request, customer_id):
     
     if admin_check(request) == True:
