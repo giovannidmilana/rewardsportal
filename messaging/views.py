@@ -27,7 +27,7 @@ import base64
 
 import csv, io
 
-import numpy as np
+#import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 #from pandas import DataFrame, Timestamp
