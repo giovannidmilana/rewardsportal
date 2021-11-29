@@ -9,6 +9,7 @@ from rewards.forms import *
 from rewards.models import *
 from .forms import *
 from .models import *
+from messaging.models import *
 from django.shortcuts import render, get_object_or_404
 from datetime import datetime, timedelta
 from django.utils import timezone
@@ -27,7 +28,7 @@ import base64
 
 import csv, io
 
-#import numpy as np
+import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 #from pandas import DataFrame, Timestamp
@@ -327,36 +328,35 @@ def get_plot2():
 
 
 def get_plot(behavior_id):
+    
     behavior = get_object_or_404(Behavior, id = behavior_id)
     
     messages = pd.DataFrame(list(ShortMessage.objects.filter(behavior = behavior_id).values()))
     rt = pd.DataFrame(list(Transaction.objects.all().values()))
-    print("K")
-    print(len(messages))
+    print('JJJ')
     print(len(rt))
-    
-    rt = rt[rt['customer_id'].isin(messages['customer_id'].unique())]
-    
-    messages['V'] = np.arange(0, len(messages))
-    #messages['V'] = np.ones(len(messages))
-    #rt['V'] = np.arange(0,len(rt))
+    if len(messages) >0:
+        rt = rt[rt['customer_id'].isin(messages['customer_id'].unique())]
+        messages['V'] = np.arange(0, len(messages))
+        #messages['V'] = np.ones(len(messages))
+        #rt['V'] = np.arange(0,len(rt))
 
-    rt = rt.sort_values(by='time',  ascending=True)
-    messages = messages.sort_values(by='created', ascending=True)
-    '''
-    plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
-    plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
-    '''
-    #print(rt['total'].rolling(5).mean())
-    #print(messages['V'].rolling(5).mean())
+        rt = rt.sort_values(by='time',  ascending=True)
+        messages = messages.sort_values(by='created', ascending=True)
+        '''
+        plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
+        plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
+        '''
+        #print(rt['total'].rolling(5).mean())
+        #print(messages['V'].rolling(5).mean())
     
-    plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
-    plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
-    plt.legend(loc="upper left")
-    #plt.legend()
-    #plt.show()
-    plt.savefig('media/plots/' + str(behavior.title).replace(" ", "") + '.png')
-    plt.close()
+        plt.plot(rt['time'], rt['total'], '-ok',markersize=1, linewidth=1, label = "transactions")
+        plt.plot(messages['created'], messages['V'], linewidth=2.5, label = "messages")
+        plt.legend(loc="upper left")
+        #plt.legend()
+        #plt.show()
+        plt.savefig('media/plots/' + str(behavior.title).replace(" ", "") + '.png')
+        plt.close()
     
     
     

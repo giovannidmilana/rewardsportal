@@ -17,7 +17,7 @@ from sendgrid.helpers.mail import Attachment as FAttachment
 import base64
 import csv, io
 
-from . import views
+from .views import *
 
 
 
@@ -26,9 +26,10 @@ def main():
     behaviors = Behavior.objects.all()
     c = MCustomer.objects.all().order_by('total_balance')
     c = list(c)
-    
+    t = len(c)
+    print(t)
     for behavior in behaviors:
-        v = int(len(c) * behavior.reach_percent / 100)
+        v = int(t * behavior.reach_percent / 100)
         #lower percentage customers
         if behavior.demo == '1' and behavior_check(behavior) == True:
             c = c[0:v]
@@ -63,16 +64,16 @@ def main():
         if behavior.demo == '5' and behavior_check(behavior) == True:
             c = Customer.objects.order_by('lastvisit')
             c = list(c)
-            v = int(len(c) * k.reach_percent / 100)
-            c = customer_trans(customers)
-            c = customer_check2(c[0:v])
+            #v = int(len(c) * k.reach_percent / 100)
+            c = customer_trans(c)
+            c = customer_check2(c[:v])
             send_messages(c, behavior)
         #long time no see
         if behavior.demo == '6' and behavior_check(behavior) == True:
             c = Customer.objects.order_by('lastvisit')
             c = list(c)
-            v = int(len(c) * k.reach_percent / 100)
-            c = customer_trans(customers)
+            #v = int(len(c) * k.reach_percent / 100)
+            c = customer_trans(c)
             c = customer_check2(c[len(c)-v: -1])
             send_messages(c, behavior)
         
@@ -96,7 +97,7 @@ def customer_check2(customers):
 def customer_trans(customers):
     l = []
     for customer in customers:
-        l.append(Mcustomer.objects.get(customer_id = customer.id))
+        l.append(MCustomer.objects.get(customer_id = customer.id))
     return l
         
 
@@ -123,18 +124,23 @@ def send_messages(customers, behavior):
     attachment = 0
     #print(len(messages))
     for i in range(0, len(customers)):
-        print(customers[i].total_balance)
-        update_cb(behavior, customers[i])
+        #print(customers[i].total_balance)
+        #update_cb(behavior, customers[i])
         if behavior.platform == '1':
             #print(len(Attachment.objects.filter(behavior_id = behavior.id)))
             if len(Attachment.objects.filter(behavior_id = behavior.id)) > 0:
                 attachment = Attachment.objects.filter(behavior_id = behavior.id)[random.randint(0,len(Attachment.objects.filter(behavior_id = behavior.id))-1)]
                 update_a(attachment)
-            message = messages[random.randint(0,len(Message.objects.filter(behavior_id = behavior.id))-1)]
+            if len(Message.objects.filter(behavior_id = behavior.id)) > 0:
+                print("M")
+                print(len(messages) - 1)
+                message = messages[random.randint(0,len(messages) - 1)]
+                update_m(message)
+                create_promo(message, behavior, customers[i])
+                create_sm(message, behavior, customers[i], attachment)
+                update_cb(behavior, customers[i])
             #send_e(customers[i].customer.id, message, attachment)
-            update_m(message)
-            create_promo(message, behavior, customers[i])
-            create_sm(message, behavior, customers[i], attachment)
+            #update_cb(behavior, customers[i])
         else:
             create_sm(message, behavior, customers[i], attachment)
             #send_sm(customers[i].customer.id, messages[random.randint(0,len(messages)-1)])

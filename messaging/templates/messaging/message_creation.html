@@ -27,8 +27,7 @@
 .myDiv3 {
   margin: auto;
   width: 100%;
-  background-color: black;    
-  text-align: left;
+  text-align: center;
 }
 
 
@@ -76,6 +75,25 @@ h1 {letter-spacing: 6px}
         {% endfor %}
       </div>
     </div>
+    
+    
+    
+<div class="w3-padding-32" id="main">
+  <!-- Header/Home -->
+
+  <div class="w3-bar w3-border">
+  <button onclick="document.getElementById('id01').style.display='block'" class="w3-bar-item w3-button">Info</button>
+
+  <div id="id01" class="w3-modal">
+    <div class="w3-modal-content">
+      <div class="myDiv3">
+        <p>&nbsp;</p>
+        <p style="color:black;">From this page you can attach files and messages in the form of two text fields subject and body the subject is used as the subject of an email if the platform is set to email and is a signature of a text if the platform is set to text. The reach percent refers to what persenctage of of the degographic you choose to send messages to. And the reach total field acts as a stop loss of how many custimers the behavior ran reach. The reached field is a current cound of how many messages the behavior has reached. start and end date are explanatory and expiration is applied if the behavior is set to promotion and applies an expiration to promotions and rebates sent by the behavior. Active is basically an On and Off button for the behavior.</p>
+        <span onclick="document.getElementById('id01').style.display='none'"  style="color:black;" class="w3-button w3-display-topright">&times;</span>
+      </div>
+    </div>
+  </div>
+ </div>
       
       
     </div>
@@ -86,10 +104,7 @@ h1 {letter-spacing: 6px}
   
   <div class="mydiv3">
   
-    <p>
-    Create messages to be sent as the body of a text message or email, and attach pdf files to emails for use in promotions. NOTE: Attached files are irrelevant when the behavior platform is set to Phone and a message subject is an emails subject or texts signature. 
-    </p>
-  
+    
   
   <div class="w3-row-padding w3-padding-32" style="margin:0 16px">
         <div class="w3-third w3-margin-bottom" style="width:60%">

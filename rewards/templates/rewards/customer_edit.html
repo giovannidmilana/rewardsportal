@@ -20,6 +20,16 @@
   text-align: center;
 }
 
+
+.myDiv3 {
+  margin: auto;
+  width: 100%;
+  background-color: white;    
+  text-align: center;
+}
+
+
+
 .myDiv2 {
   margin: auto;
   width: 100%;
@@ -109,6 +119,28 @@ body, h1,h2,h3,h4,h5,h6 {font-family: "Montserrat", sans-serif}
      <button type="submit">Search</button>
     </form>
   </div>  
+    
+    
+    <!-- Page Content -->
+<div class="w3-padding-large" id="main">
+  <!-- Header/Home -->
+
+  <div class="w3-container">
+  <button onclick="document.getElementById('id01').style.display='block'" class="w3-button w3-dark-gray">Info</button>
+
+  <div id="id01" class="w3-modal">
+    <div class="w3-modal-content">
+      <div class="myDiv3">
+        <p>&nbsp;</p>
+        <p style="color:black;">From this page you can make transactions belonging to the customer, associated Upc numbers with the customer which you can later use to search for the customer, see transaction history, redeem promotions belonging to the customer, resend a marketing consent message, edit customer information and delete customer. </p>
+        <span onclick="document.getElementById('id01').style.display='none'"  style="color:black;" class="w3-button w3-display-topright">&times;</span>
+      </div>
+    </div>
+  </div>
+ </div>
+    
+    
+    
     
   <div class="myDiv2" id="contact">logged in as {{ user.first_name }} {{ user.last_name }}</div>
     
