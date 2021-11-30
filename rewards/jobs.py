@@ -6,8 +6,8 @@ import time
 def sched_test():
     print("testy mcCnuggets is on line One")
     
-    
-def run_continuously(self, interval=21600):
+#21600
+def run_continuously(self, interval=60):
     """Continuously run, while executing pending jobs at each elapsed
     time interval.
     @return cease_continuous_run: threading.Event which can be set to

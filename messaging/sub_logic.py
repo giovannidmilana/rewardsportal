@@ -25,18 +25,20 @@ def main():
     print('Main')
     behaviors = Behavior.objects.all()
     c = MCustomer.objects.all().order_by('total_balance')
-    c = list(c)
-    t = len(c)
+    #c = list(c)
+    t = len(list(c))
     print(t)
     for behavior in behaviors:
         v = int(t * behavior.reach_percent / 100)
         #lower percentage customers
         if behavior.demo == '1' and behavior_check(behavior) == True:
+            c = MCustomer.objects.all().order_by('total_balance')
             c = c[0:v]
             c = customer_check2(c)
             send_messages(c, behavior)
         #median percentage customers
         if behavior.demo == '2' and behavior_check(behavior) == True:
+            c = MCustomer.objects.all().order_by('total_balance')
             #middle of customer list
             mid = int(len(c) / 2) 
             #half the number of customer to be reached by behavior 
@@ -47,13 +49,14 @@ def main():
             send_messages(c, behavior)
         #lower percentile customers
         if behavior.demo == '3' and behavior_check(behavior) == True:
+            c = MCustomer.objects.all().order_by('total_balance')
             c = c[len(c)-v-1:]
             c = customer_check2(c)
             send_messages(c, behavior)
         #randomly selected customers
         if behavior.demo == '4' and behavior_check(behavior) == True:
             customers = MCustomer.objects.all()
-            customers = list(customers)
+            #customers = list(customers)
             #number of customers to reach
             for i in range(0,v):
                 ri = random.randint(0,len(customers)-1)
@@ -62,20 +65,20 @@ def main():
                     send_messages([c], behavior)
         #recently vistited
         if behavior.demo == '5' and behavior_check(behavior) == True:
-            c = Customer.objects.order_by('lastvisit')
-            c = list(c)
+            customers = Customer.objects.order_by('lastvisit')
+            #c = list(c)
             #v = int(len(c) * k.reach_percent / 100)
-            c = customer_trans(c)
-            c = customer_check2(c[:v])
-            send_messages(c, behavior)
+            customers = customer_trans(customers)
+            customers = customer_check2(customers[:v])
+            send_messages(customers, behavior)
         #long time no see
         if behavior.demo == '6' and behavior_check(behavior) == True:
-            c = Customer.objects.order_by('lastvisit')
-            c = list(c)
+            customers = Customer.objects.order_by('lastvisit')
+            #c = list(c)
             #v = int(len(c) * k.reach_percent / 100)
-            c = customer_trans(c)
-            c = customer_check2(c[len(c)-v: -1])
-            send_messages(c, behavior)
+            customers = customer_trans(customers)
+            customers = customer_check2(customers[t-v:])
+            send_messages(customers, behavior)
         
         get_plot2()
         
