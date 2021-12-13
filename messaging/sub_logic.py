@@ -100,7 +100,10 @@ def customer_check2(customers):
 def customer_trans(customers):
     l = []
     for customer in customers:
-        l.append(MCustomer.objects.get(customer_id = customer.id))
+        try:
+            l.append(MCustomer.objects.get(customer_id = customer.id))
+        except Exception as e:
+            pass
     return l
         
 
