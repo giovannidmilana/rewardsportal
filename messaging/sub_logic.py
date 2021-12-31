@@ -118,7 +118,7 @@ def customer_check(customer):
     mp = 14
     # and customer.opted == True
     if (customer.last_marketed < (timezone.now() - timedelta(days=tc))) and (customer.messages_period < mp) and (customer.customer.lastvisit < (timezone.now() - timedelta(days=tc))):
-        #print(customer.messages_period)
+        print('cc1')
         return True
     else:
         return False

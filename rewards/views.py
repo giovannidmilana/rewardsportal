@@ -203,13 +203,17 @@ class SearchResultsViewE(ListView):
     template_name = 'rewards/search_results_E.html'
     
     def get_queryset(self): # new
-        query = self.request.GET.get('q')
-        object_list = []
-        if query != None:
-            object_list = User.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(email__icontains=query) | Q(username__icontains=query))
-            if ' ' in query:
-                object_list = User.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(email__icontains=query) | Q(username__icontains=query) | Q(first_name__icontains=query.split()[0]) | Q(last_name__icontains=query.split()[1]))
-        return object_list
+        try:
+            query = self.request.GET.get('q')
+            object_list = []
+            if query != None:
+                object_list = User.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(email__icontains=query) | Q(username__icontains=query))
+                if ' ' in query:
+                    object_list = User.objects.filter(Q(first_name__icontains=query) | Q(last_name__icontains=query) | Q(email__icontains=query) | Q(username__icontains=query) | Q(first_name__icontains=query.split()[0]) | Q(last_name__icontains=query.split()[1]))
+            return object_list
+        except Exception as e:
+            pass
+        
 
 #card/upc search
 class SearchResultsViewC(ListView):
@@ -217,13 +221,16 @@ class SearchResultsViewC(ListView):
     template_name = 'rewards/search_results.html'
     
     def get_queryset(self): # new
-        c_list = []
-        query = self.request.GET.get('q')
-        if query != None:
-            object_list = Card.objects.filter(Q(upc__icontains=query))
-            eobj = get_object_or_404(Customer, id = object_list[0].customer.id)
-            c_list.append(eobj)
-        return c_list
+        try:
+            c_list = []
+            query = self.request.GET.get('q')
+            if query != None:
+                object_list = Card.objects.filter(Q(upc__icontains=query))
+                eobj = get_object_or_404(Customer, id = object_list[0].customer.id)
+                c_list.append(eobj)
+            return c_list
+        except Exception as e:
+            pass
         
     def get_context_data(self, **kwargs):
         employee = get_object_or_404(Employee, user_id = self.request.user.id)
