@@ -20,12 +20,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k90w^b2z!u1#pfrop&l+0ua8b#_9u#g$!=r3#x-)u%pvvnozso'
+SECRET_KEY = 'Get Your Own'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*', '71.92.32.11:8000']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -98,7 +98,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql', 
         'NAME': 'portal_data',
         'USER': 'root',
-        'PASSWORD': 'newpassword',
+        'PASSWORD': 'Get Your Own',
         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
         'PORT': '3306',
     }
@@ -111,7 +111,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'portal_data',
         'USER': 'Giovanni@rewards-server',
-        'PASSWORD': 'RewardsBoi@1',
+        'PASSWORD': 'Get Your Own',
         'HOST': 'rewards-server.postgres.database.azure.com',
         'PORT': '5432'
         
