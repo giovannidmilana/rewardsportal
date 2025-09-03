@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'rewardssystemdb.mysql.database.azure.com',
         'USER': 'Giovanni@rewardssystemdb',
-        'PASSWORD': 'RewardsBoi@1',
+        'PASSWORD': 'Get Your Own',
         'PORT': '3306',
         'HOST': 'rewardssystemdb.mysql.database.azure.com',
         
