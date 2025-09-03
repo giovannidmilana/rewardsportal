@@ -60,4 +60,5 @@ jobs:
         with:
           app-name: 'RewardsPortal'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D0A89C051AF645AC9BC3C9984481DE03 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_GetYourOwn }}
+
